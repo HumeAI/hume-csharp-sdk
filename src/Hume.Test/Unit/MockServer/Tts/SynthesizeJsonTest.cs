@@ -95,7 +95,7 @@ public class SynthesizeJsonTest : BaseMockServerTest
                         },
                     },
                 },
-                Format = new Format(new Format.Mp3(new FormatMp3())),
+                Format = new FormatMp3 { Type = "mp3" },
                 NumGenerations = 1,
                 Utterances = new List<PostedUtterance>()
                 {

@@ -3,12 +3,17 @@ using System.Net.WebSockets;
 using System.Text.Json;
 using Hume.Core;
 using Hume.Core.Async;
+using Hume.Core.Async.Events;
 using Hume.Core.Async.Models;
 
 namespace Hume.Tts;
 
 public partial class StreamInputApi : AsyncApi<StreamInputApi.Options>
 {
+    public readonly Event<TimestampMessage> TimestampMessage = new();
+
+    public readonly Event<SnippetAudioChunk> SnippetAudioChunk = new();
+
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -172,12 +177,44 @@ public partial class StreamInputApi : AsyncApi<StreamInputApi.Options>
 
         // deserialize the message to find the correct event
 
+        try
+        {
+            var message = json.Deserialize<TimestampMessage>();
+            if (message != null)
+            {
+                await TimestampMessage.RaiseEvent(message).ConfigureAwait(false);
+                return;
+            }
+        }
+        catch (Exception)
+        {
+            // message is not TimestampMessage, continue
+        }
+
+        try
+        {
+            var message = json.Deserialize<SnippetAudioChunk>();
+            if (message != null)
+            {
+                await SnippetAudioChunk.RaiseEvent(message).ConfigureAwait(false);
+                return;
+            }
+        }
+        catch (Exception)
+        {
+            // message is not SnippetAudioChunk, continue
+        }
+
         await ExceptionOccurred
             .RaiseEvent(new Exception($"Unknown message: {json.ToString()}"))
             .ConfigureAwait(false);
     }
 
-    protected override void DisposeEvents() { }
+    protected override void DisposeEvents()
+    {
+        TimestampMessage.Dispose();
+        SnippetAudioChunk.Dispose();
+    }
 
     public async System.Threading.Tasks.Task Send(PublishTts message)
     {

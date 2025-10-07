@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading;
 using Hume;
 using Hume.Core;
+using OneOf;
 
 namespace Hume.Tts;
 
@@ -40,7 +41,7 @@ public partial class TtsClient
     ///                 },
     ///             },
     ///         },
-    ///         Format = new Format(new Format.Mp3(new FormatMp3())),
+    ///         Format = new FormatMp3 { Type = "mp3" },
     ///         NumGenerations = 1,
     ///         Utterances = new List&lt;PostedUtterance&gt;()
     ///         {
@@ -125,7 +126,7 @@ public partial class TtsClient
     ///         {
     ///             GenerationId = "09ad914d-8e7f-40f8-a279-e34f07f7dab2",
     ///         },
-    ///         Format = new Format(new Format.Mp3(new FormatMp3())),
+    ///         Format = new FormatMp3 { Type = "mp3" },
     ///         NumGenerations = 1,
     ///         Utterances = new List&lt;PostedUtterance&gt;()
     ///         {
@@ -284,7 +285,9 @@ public partial class TtsClient
     ///     }
     /// );
     /// </code></example>
-    public async IAsyncEnumerable<TtsOutput> SynthesizeJsonStreamingAsync(
+    public async IAsyncEnumerable<
+        OneOf<TimestampMessage, SnippetAudioChunk>
+    > SynthesizeJsonStreamingAsync(
         PostedTts request,
         RequestOptions? options = null,
         CancellationToken cancellationToken = default
@@ -310,10 +313,10 @@ public partial class TtsClient
             using var reader = new StreamReader(await response.Raw.Content.ReadAsStreamAsync());
             while (!string.IsNullOrEmpty(line = await reader.ReadLineAsync()))
             {
-                var chunk = (TtsOutput?)null;
+                var chunk = (OneOf<TimestampMessage, SnippetAudioChunk>?)null;
                 try
                 {
-                    chunk = JsonUtils.Deserialize<TtsOutput>(line);
+                    chunk = JsonUtils.Deserialize<OneOf<TimestampMessage, SnippetAudioChunk>>(line);
                 }
                 catch (System.Text.Json.JsonException)
                 {

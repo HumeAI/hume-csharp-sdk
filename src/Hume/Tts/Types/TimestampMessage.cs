@@ -39,6 +39,13 @@ public record TimestampMessage : IJsonOnDeserialized
     [JsonPropertyName("timestamp")]
     public required Timestamp Timestamp { get; set; }
 
+    [JsonPropertyName("type")]
+    public string Type
+    {
+        get => "timestamp";
+        set => value.Assert(value == "timestamp", "'Type' must be " + "timestamp");
+    }
+
     [JsonIgnore]
     public ReadOnlyAdditionalProperties AdditionalProperties { get; private set; } = new();
 

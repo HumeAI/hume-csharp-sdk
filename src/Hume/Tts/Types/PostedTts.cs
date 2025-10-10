@@ -23,7 +23,7 @@ public record PostedTts : IJsonOnDeserialized
     /// Specifies the output audio file format.
     /// </summary>
     [JsonPropertyName("format")]
-    public Format? Format { get; set; }
+    public OneOf<FormatMp3, FormatPcm, FormatWav>? Format { get; set; }
 
     /// <summary>
     /// The set of timestamp types to include in the response.

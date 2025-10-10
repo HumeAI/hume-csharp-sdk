@@ -72,6 +72,13 @@ public record SnippetAudioChunk : IJsonOnDeserialized
     [JsonPropertyName("transcribed_text")]
     public string? TranscribedText { get; set; }
 
+    [JsonPropertyName("type")]
+    public string Type
+    {
+        get => "audio";
+        set => value.Assert(value == "audio", "'Type' must be " + "audio");
+    }
+
     /// <summary>
     /// The index of the utterance in the request that the parent snippet of this chunk corresponds to.
     /// </summary>

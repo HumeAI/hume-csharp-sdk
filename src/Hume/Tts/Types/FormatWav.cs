@@ -12,6 +12,13 @@ public record FormatWav : IJsonOnDeserialized
     private readonly IDictionary<string, JsonElement> _extensionData =
         new Dictionary<string, JsonElement>();
 
+    [JsonPropertyName("type")]
+    public string Type
+    {
+        get => "wav";
+        set => value.Assert(value == "wav", "'Type' must be " + "wav");
+    }
+
     [JsonIgnore]
     public ReadOnlyAdditionalProperties AdditionalProperties { get; private set; } = new();
 

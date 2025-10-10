@@ -12,6 +12,13 @@ public record FormatPcm : IJsonOnDeserialized
     private readonly IDictionary<string, JsonElement> _extensionData =
         new Dictionary<string, JsonElement>();
 
+    [JsonPropertyName("type")]
+    public string Type
+    {
+        get => "pcm";
+        set => value.Assert(value == "pcm", "'Type' must be " + "pcm");
+    }
+
     [JsonIgnore]
     public ReadOnlyAdditionalProperties AdditionalProperties { get; private set; } = new();
 

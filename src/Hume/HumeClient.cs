@@ -18,6 +18,7 @@ public partial class HumeClient
                 { "X-Fern-Language", "C#" },
                 { "X-Fern-SDK-Name", "Hume" },
                 { "X-Fern-SDK-Version", Version.Current },
+                { "User-Agent", "Hume/0.2.1" },
             }
         );
         clientOptions ??= new ClientOptions();
